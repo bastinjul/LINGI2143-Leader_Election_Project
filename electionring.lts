@@ -14,17 +14,16 @@ LEADER 		= 	(open->close->snd.token->IDLE
 ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
 				| rcv.claim[I] -> LEADER
 				| rcv.claim[j:Node_ids] ->
-					if (j<I) then (snd.claim[j] -> NOT_ELIGIBLE)
+					if (j<I) then (snd.claim[j] -> IDLE)
 					else ELIGIBLE
-				| rcv.token -> LEADER),
-NOT_ELIGIBLE=	IDLE.
+				| rcv.token -> LEADER) + {snd.claim[Node_ids]}.
 
 CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
 
 
 ||ELECTIONRING = (node[i:Node_ids]:NODE(i) || channel[i:Node_ids]:CHANNEL)
-		 		/  {node[i:Node_ids].rcv.token/channel[i].out,
-					node[i:Node_ids].snd.token/channel[(i+1)%N].in}.
+		 		/  {node[i:Node_ids].rcv/channel[i].out,
+					node[i:Node_ids].snd/channel[(i+1)%N].in}.
 
 ||ELECTIONSERVICE = ELECTIONRING
 @{node[Node_ids].{open,close}}.
