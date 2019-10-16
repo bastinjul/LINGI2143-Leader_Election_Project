@@ -1,4 +1,4 @@
-const N = 10
+const N = 2
 range Node_ids = 0..N-1
 
 set Messages = {token, claim[Node_ids]}
@@ -7,17 +7,17 @@ NODE(I=0) 	= 	IDLE,
 IDLE 		= 	(rcv.token -> LEADER
 				| snd.claim[I] -> ELIGIBLE
 				| rcv.claim[j:Node_ids] -> 
-					if (j < I) then snd.claim[j] -> IDLE
+					if (j < I) then (snd.claim[j] -> IDLE)
 					else IDLE),
 LEADER 		= 	(open->close->snd.token->IDLE
 				| snd.token->IDLE),
 ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
 				| rcv.claim[I] -> LEADER
 				| rcv.claim[j:Node_ids] ->
-					if (j<i) then snd.claim[j] -> NOT_ELIGIBLE
+					if (j<I) then (snd.claim[j] -> NOT_ELIGIBLE)
 					else ELIGIBLE
 				| rcv.token -> LEADER),
-NOT_ELIGIBLE= IDLE.
+NOT_ELIGIBLE=	IDLE.
 
 CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
 
