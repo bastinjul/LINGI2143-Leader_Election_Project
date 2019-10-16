@@ -1,0 +1,30 @@
+const N = 10
+range Node_ids = 0..N-1
+
+set Messages = {token, claim[Node_ids]}
+
+NODE(I=0) 	= 	IDLE, 
+IDLE 		= 	(rcv.token -> LEADER
+				| snd.claim[I] -> ELIGIBLE
+				| rcv.claim[j:Node_ids] -> 
+					if (j < I) then snd.claim[j] -> IDLE
+					else IDLE),
+LEADER 		= 	(open->close->snd.token->IDLE
+				| snd.token->IDLE),
+ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
+				| rcv.claim[I] -> LEADER
+				| rcv.claim[j:Node_ids] ->
+					if (j<i) then snd.claim[j] -> NOT_ELIGIBLE
+					else ELIGIBLE
+				| rcv.token -> LEADER),
+NOT_ELIGIBLE= IDLE.
+
+CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+
+
+||ELECTIONRING = (node[i:Node_ids]:NODE(i) || channel[i:Node_ids]:CHANNEL)
+		 		/  {node[i:Node_ids].rcv.token/channel[i].out,
+					node[i:Node_ids].snd.token/channel[(i+1)%N].in}.
+
+||ELECTIONSERVICE = ELECTIONRING
+@{node[Node_ids].{open,close}}.
