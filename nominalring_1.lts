@@ -1,0 +1,15 @@
+const N = 10
+range Node_ids = 0..N-1
+
+
+NODE(I=0) 	= 	if I == 0 then LEADER else IDLE, 
+IDLE 		= 	(rcv_token -> LEADER),
+LEADER 		= 	(open->close->snd_token->IDLE
+				| snd_token->IDLE).
+
+CHANNEL	= (in -> out -> CHANNEL).
+
+
+||NOMINALRING = (node[i:Node_ids]:NODE(i) || channel[i:Node_ids]:CHANNEL)
+		 		/  {node[i:Node_ids].rcv_token/channel[i].out,
+					node[i:Node_ids].snd_token/channel[(i+1)%N].in}.
