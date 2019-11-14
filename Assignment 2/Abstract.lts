@@ -1,0 +1,35 @@
+const N = 3
+range Node_ids = 0..N-1
+
+set Messages = {token, claim[Node_ids]}
+
+NODE(I=0) 	= 	IDLE, 
+IDLE 		= 	(rcv.token -> LEADER
+				| snd.claim[I] -> ELIGIBLE
+				| rcv.claim[j:Node_ids] -> 
+					if (j < I) then (snd.claim[j] -> IDLE)
+					else IDLE),
+LEADER 		= 	(open->close->snd.token->IDLE
+				| snd.token->IDLE),
+ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
+				| rcv.claim[I] -> LEADER
+				| rcv.claim[j:Node_ids] ->
+					if (j<I) then (snd.claim[j] -> IDLE)
+					else ELIGIBLE
+				| rcv.token -> LEADER) + {snd.claim[Node_ids]}.
+
+CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+
+
+||ELECTIONRING = (node[i:Node_ids]:NODE(i) || channel[i:Node_ids]:CHANNEL)
+		 		/  {node[i:Node_ids].rcv/channel[i].out,
+					node[i:Node_ids].snd/channel[(i+1)%N].in}.
+
+||ELECTIONSERVICE = ELECTIONRING
+@{node[Node_ids].{open,close}}.
+
+minimal ||ABSTRACT0 = ELECTIONRING.
+minimal ||ABSTRACT1 = ABSTRACT0 \ {[i:Node_ids].snd.claim[j:Node_ids]}.
+minimal ||ABSTRACT2 = ABSTRACT1 \ {[i:Node_ids].rcv.claim[j:Node_ids]}.
+minimal ||ABSTRACT3 = ABSTRACT2 \ {[i:Node_ids].rcv.token}.
+minimal ||ABSTRACT4 = ABSTRACT3 \ {[i:Node_ids].snd.token}.
