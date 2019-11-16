@@ -1,0 +1,51 @@
+const N = 3
+range Node_ids = 0..N-1
+
+set Messages = {token, claim[Node_ids]}
+
+ELECTIONNODE(I=0) 	= 	IDLE, 
+IDLE 		= 	( rcv.token -> LEADER
+				| snd.claim[I] -> ELIGIBLE
+				| crash -> CRASHED
+				| rcv.claim[j:Node_ids] -> 
+					if (j < I) then (snd.claim[j] -> IDLE)
+					else IDLE
+				),
+LEADER 		= 	(open->close->snd.token->IDLE
+				| snd.token->IDLE
+				),
+CRASHED		=	( idle -> CRASHED
+				| rcv.token -> snd.token -> CRASHED
+				| rcv.claim[j:Node_ids] -> 
+					if (j == I) then CRASHED
+					else (snd.claim[I] -> CRASHED)
+				),
+ELIGIBLE	=	( snd.claim[I] -> ELIGIBLE
+				| rcv.claim[I] -> LEADER
+				| rcv.claim[j:Node_ids] ->
+					//if (j == I) then LEADER
+					if (j<I) then (snd.claim[j] -> IDLE)
+					else ELIGIBLE
+				| rcv.token -> LEADER
+				| crash -> CRASHED 
+				) + {snd.claim[Node_ids]}.
+
+
+CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+
+
+||CRASHNRING = (node[i:Node_ids]:ELECTIONNODE(i) || channel[j:Node_ids]:CHANNEL)
+		 		/  {node[i:Node_ids].rcv/channel[i].out,
+					node[i:Node_ids].snd/channel[(i+1)%N].in}.
+
+fluent CRITICAL[i:Node_ids] = <{[i].open}, {[i].close}>
+assert MUTEX = forall[i:Node_ids] forall[j:Node_ids] (rigid(i!=j) -> []!(CRITICAL[i] && CRITICAL[j] ))
+fluent FIRSTCLAIM[i:Node_ids] = <[i].snd.claim[i], [i].rcv.claim[i]>
+assert NODUPCLAIM = forall[i:Node_ids] (FIRSTCLAIM[i] -> X (! FIRSTCLAIM[i]))
+assert NODUP_MUTEX = (NODUPCLAIM -> MUTEX)
+
+assert ALLFAIR = [] <> [Node_ids].open
+
+assert NOCRASH = [] (! [Node_ids].crash)
+assert FAIR = [] <> [Node_ids].open
+assert NOCRASH_FAIR = (NOCRASH -> FAIR)
