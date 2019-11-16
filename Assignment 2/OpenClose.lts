@@ -1,4 +1,4 @@
-const N = 2
+const N = 3
 range Node_ids = 0..N-1
 
 NOMINALNODE(I=0)= 	LEADER[I], 
@@ -29,6 +29,6 @@ ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
 CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
 
 
-||ELECTIONRING = ([i:Node_ids]:ELECTIONNODE(i) || [j:Node_ids]:CHANNEL || OPENCLOSE)
+||ELECTIONRING = (node[i:Node_ids]:ELECTIONNODE(i) || channel[j:Node_ids]:CHANNEL || OPENCLOSE)
 		 		/  {node[i:Node_ids].rcv/channel[i].out,
 					node[i:Node_ids].snd/channel[(i+1)%N].in}.
