@@ -18,12 +18,14 @@ ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
 					else ELIGIBLE
 				| rcv.token -> LEADER) + {snd.claim[Node_ids]}.
 
-CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+CHANNEL	= (token.snd -> token.rcv -> CHANNEL | claim.snd[i:Node_ids] -> claim.rcv[i] -> CHANNEL).
 
 
-||ELECTIONRING = (node[i:Node_ids]:NODE(i) || channel[i:Node_ids]:CHANNEL)
-		 		/  {node[i:Node_ids].rcv/channel[i].out,
-					node[i:Node_ids].snd/channel[(i+1)%N].in}.
+||ELECTIONRING = ([j:Node_ids]:NODE(j) || [i:Node_ids]:CHANNEL)
+		 		/  {[i:Node_ids].snd.claim[j:Node_ids]/[i].claim.snd[j],
+					[i:Node_ids].rcv.claim[j:Node_ids]/[(i+N-1)%N].claim.rcv[j],
+					[i:Node_ids].snd.token/[i].token.snd,
+					[i:Node_ids].rcv.token/[(i+N-1)%N].token.rcv}.
 
 ||ELECTIONSERVICE = ELECTIONRING
 @{node[Node_ids].{open,close}}.

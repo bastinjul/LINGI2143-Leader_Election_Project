@@ -1,7 +1,7 @@
 const N = 3
 range Node_ids = 0..N-1
 
-NOMINALNODE(I=0)= 	LEADER[I], 
+NOMINALNODE(I=0)= 	LEADER[I],
 IDLE[i:Node_ids] 	= 	(i.rcv.token -> LEADER[i]),
 LEADER[i:Node_ids] 	=	([i].open -> [i].close -> [i].snd.token -> IDLE[(i+1)%N] | [i].snd.token -> IDLE[(i+1)%N]).
 
@@ -11,10 +11,10 @@ property OPENCLOSE = ([i:Node_ids].open -> [i].close -> OPENCLOSE).
 
 set Messages = {token, claim[Node_ids]}
 
-ELECTIONNODE(I=0) 	= 	IDLE, 
+NODE(I=0) 	= 	IDLE,
 IDLE 		= 	(rcv.token -> LEADER
 				| snd.claim[I] -> ELIGIBLE
-				| rcv.claim[j:Node_ids] -> 
+				| rcv.claim[j:Node_ids] ->
 					if (j < I) then (snd.claim[j] -> IDLE)
 					else IDLE),
 LEADER 		= 	(open->close->snd.token->IDLE
@@ -26,9 +26,11 @@ ELIGIBLE	=	(snd.claim[I] -> ELIGIBLE
 					else ELIGIBLE
 				| rcv.token -> LEADER) + {snd.claim[Node_ids]}.
 
-CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+CHANNEL	= (token.snd -> token.rcv -> CHANNEL | claim.snd[i:Node_ids] -> claim.rcv[i] -> CHANNEL).
 
 
-||ELECTIONRING = (node[i:Node_ids]:ELECTIONNODE(i) || channel[j:Node_ids]:CHANNEL || OPENCLOSE)
-		 		/  {node[i:Node_ids].rcv/channel[i].out,
-					node[i:Node_ids].snd/channel[(i+1)%N].in}.
+||ELECTIONRING = ([j:Node_ids]:NODE(j) || [i:Node_ids]:CHANNEL)
+		 		/  {[i:Node_ids].snd.claim[j:Node_ids]/[i].claim.snd[j],
+					[i:Node_ids].rcv.claim[j:Node_ids]/[(i+N-1)%N].claim.rcv[j],
+					[i:Node_ids].snd.token/[i].token.snd,
+					[i:Node_ids].rcv.token/[(i+N-1)%N].token.rcv}.

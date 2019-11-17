@@ -3,11 +3,11 @@ range Node_ids = 0..N-1
 
 set Messages = {token, claim[Node_ids]}
 
-ELECTIONNODE(I=0) 	= 	IDLE, 
+NODE(I=0) 	= 	IDLE,
 IDLE 		= 	( rcv.token -> LEADER
 				| snd.claim[I] -> ELIGIBLE
 				| crash -> CRASHED
-				| rcv.claim[j:Node_ids] -> 
+				| rcv.claim[j:Node_ids] ->
 					if (j < I) then (snd.claim[j] -> IDLE)
 					else IDLE
 				),
@@ -16,7 +16,7 @@ LEADER 		= 	(open->close->snd.token->IDLE
 				),
 CRASHED		=	( idle -> CRASHED
 				| rcv.token -> snd.token -> CRASHED
-				| rcv.claim[j:Node_ids] -> 
+				| rcv.claim[j:Node_ids] ->
 					if (j == I) then CRASHED
 					else (snd.claim[I] -> CRASHED)
 				),
@@ -27,16 +27,18 @@ ELIGIBLE	=	( snd.claim[I] -> ELIGIBLE
 					if (j<I) then (snd.claim[j] -> IDLE)
 					else ELIGIBLE
 				| rcv.token -> LEADER
-				| crash -> CRASHED 
+				| crash -> CRASHED
 				) + {snd.claim[Node_ids]}.
 
 
-CHANNEL	= (in[m:Messages] -> out[m] -> CHANNEL).
+CHANNEL	= (token.snd -> token.rcv -> CHANNEL | claim.snd[i:Node_ids] -> claim.rcv[i] -> CHANNEL).
 
 
-||CRASHNRING = (node[i:Node_ids]:ELECTIONNODE(i) || channel[j:Node_ids]:CHANNEL)
-		 		/  {node[i:Node_ids].rcv/channel[i].out,
-					node[i:Node_ids].snd/channel[(i+1)%N].in}.
+||CRASHNRING = ([j:Node_ids]:NODE(j) || [i:Node_ids]:CHANNEL)
+						 		/  {[i:Node_ids].snd.claim[j:Node_ids]/[i].claim.snd[j],
+										[i:Node_ids].rcv.claim[j:Node_ids]/[(i+N-1)%N].claim.rcv[j],
+										[i:Node_ids].snd.token/[i].token.snd,
+										[i:Node_ids].rcv.token/[(i+N-1)%N].token.rcv}.
 
 fluent CRITICAL[i:Node_ids] = <{[i].open}, {[i].close}>
 assert MUTEX = forall[i:Node_ids] forall[j:Node_ids] (rigid(i!=j) -> []!(CRITICAL[i] && CRITICAL[j] ))
