@@ -1,0 +1,11 @@
+Selt version 3.5.0 -- 05/29/19 -- LAAS/CNRS
+ktz loaded, 30 states, 60 transitions
+0.000s
+
+- output fullproof;
+[] -dead;
+output mode set
+0.000s
+
+- 
+

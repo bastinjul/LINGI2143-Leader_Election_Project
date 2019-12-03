@@ -1,0 +1,93 @@
+s 690.0 750.0 9
+s 1640.0 550.0 17
+s 1025.0 140.0 3
+s 1205.0 65.0 8
+s 920.0 375.0 7
+s 710.0 150.0 1
+s 1295.0 360.0 18
+s 450.0 455.0 28
+s 405.0 740.0 20
+s 640.0 420.0 21
+s 1140.0 415.0 12
+s 1040.0 610.0 11
+s 155.0 300.0 23
+s 415.0 350.0 10
+s 800.0 30.0 0
+s 585.0 785.0 19
+s 1630.0 190.0 13
+s 1120.0 270.0 5
+s 240.0 180.0 16
+s 50.0 440.0 15
+s 45.0 605.0 22
+s 540.0 705.0 14
+s 765.0 895.0 27
+s 445.0 920.0 29
+s 1095.0 900.0 6
+s 1305.0 905.0 26
+s 1505.0 890.0 25
+s 1665.0 905.0 24
+s 770.0 460.0 4
+s 825.0 270.0 2
+e 23 3 written_report n
+e 23 29 incident_call se
+e 23 28 crime_call n
+e 22 29 investigation n
+e 21 2 written_report sw
+e 21 28 incident_call e
+e 21 27 crime_call n
+e 20 28 investigation n
+e 19 27 investigation n
+e 18 5 radio_report n
+e 18 26 incident_call n
+e 18 25 crime_call n
+e 17 4 radio_report n
+e 17 25 incident_call n
+e 17 24 crime_call n
+e 16 0 written_report n
+e 16 23 incident_call n
+e 16 21 crime_call n
+e 15 23 investigation ne
+e 15 22 incident_call n
+e 15 20 crime_call n
+e 14 21 investigation n
+e 14 20 incident_call n
+e 14 19 crime_call n
+e 13 8 free_patrol n
+e 13 18 found_patrol_i n
+e 12 1 radio_report s
+e 12 18 incident_call n
+e 12 17 crime_call n
+e 11 7 free_patrol n
+e 11 17 found_patrol_i n
+e 11 15 found_patrol_c n
+e 10 16 investigation n
+e 10 15 incident_call n
+e 10 14 crime_call n
+e 9 6 free_patrol n
+e 9 14 found_patrol_c n
+e 8 13 create_patrol n
+e 7 11 create_patrol n
+e 6 9 create_patrol n
+e 5 13 incident_call n
+e 5 3 free_patrol e
+e 5 12 found_patrol_i n
+e 5 11 crime_call n
+e 4 11 incident_call n
+e 4 2 free_patrol s
+e 4 10 found_patrol_c n
+e 4 9 crime_call n
+e 3 8 incident_call n
+e 3 7 crime_call n
+e 3 5 create_patrol n
+e 2 7 incident_call n
+e 2 6 crime_call n
+e 2 4 create_patrol n
+e 1 5 incident_call n
+e 1 0 free_patrol ne
+e 1 4 crime_call n
+e 0 3 incident_call n
+e 0 2 crime_call n
+e 0 1 create_patrol n
+h reach
+
+
