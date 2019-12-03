@@ -1,0 +1,57 @@
+p 450.0 130.0 crime 0 e
+t 115.0 240.0 found_patrol_i w 0 w n {} ne
+p 115.0 140.0 incident 0 w
+p 115.0 350.0 intervention_i 0 w
+t 450.0 50.0 crime_call n 0 w n {} ne
+t 450.0 250.0 found_patrol_c e 0 w n {} ne
+p 450.0 330.0 intervention_c 0 e
+t 115.0 50.0 incident_call n 0 w n {} ne
+p 540.0 410.0 avalaible_coroner 1 n
+t 450.0 410.0 investigation n 0 w n {} ne
+t 450.0 595.0 written_report s 0 w n {} ne
+p 450.0 500.0 report 0 e
+p 555.0 500.0 avalaible_inspector 1 n
+t 115.0 450.0 radio_report s 0 w n {} ne
+p 285.0 175.0 avalaible_clerk 2 n
+p 275.0 330.0 avalaible_patrol 0 n
+t 275.0 460.0 create_patrol n 0 w n {} ne
+p 340.0 610.0 avalaible_officer 2 s
+p 220.0 615.0 avalaible_vehicule 1 s
+t 175.0 535.0 free_patrol w 0 w n {} ne
+e radio_report avalaible_clerk 1 n
+e avalaible_clerk radio_report 1 n
+e written_report avalaible_clerk 1 n
+e avalaible_clerk written_report 1 n
+e avalaible_coroner investigation 1 n
+e investigation avalaible_coroner 1 n
+e investigation avalaible_vehicule 1 n
+e written_report avalaible_officer 1 n
+e written_report avalaible_inspector 1 n
+e report written_report 1 n
+e investigation avalaible_officer 1 n
+e investigation report 1 n
+e avalaible_inspector investigation 1 n
+e intervention_c investigation 1 n
+e found_patrol_c intervention_c 1 n
+e radio_report avalaible_patrol 1 n
+e intervention_i radio_report 1 n
+e found_patrol_i intervention_i 1 n
+e found_patrol_i avalaible_clerk 1 n
+e found_patrol_c avalaible_clerk 1 n
+e avalaible_patrol found_patrol_c 1 n
+e avalaible_patrol found_patrol_i 1 n
+e crime found_patrol_c 1 n
+e incident found_patrol_i 1 n
+e crime_call crime 1 n
+e incident_call incident 1 n
+e avalaible_clerk crime_call 1 n
+e avalaible_clerk incident_call 1 n
+e free_patrol avalaible_vehicule 1 n
+e free_patrol avalaible_officer 2 n
+e avalaible_patrol free_patrol 1 n
+e create_patrol avalaible_patrol 1 n
+e avalaible_officer create_patrol 2 n
+e avalaible_vehicule create_patrol 1 n
+h testB
+
+
